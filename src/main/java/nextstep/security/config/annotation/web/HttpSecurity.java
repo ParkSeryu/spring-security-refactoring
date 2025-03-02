@@ -14,14 +14,18 @@ import nextstep.security.config.annotation.SecurityConfigurer;
 import nextstep.security.config.annotation.web.configurers.CsrfConfigurer;
 import nextstep.security.config.annotation.web.configurers.FormLoginConfigurer;
 import nextstep.security.config.annotation.web.configurers.HttpBasicConfigurer;
+import nextstep.security.config.annotation.web.configurers.SecurityContextConfigurer;
 
 public class HttpSecurity {
     private final LinkedHashMap<Class<? extends SecurityConfigurer>, SecurityConfigurer> configurers = new LinkedHashMap<>();
     private final List<Filter> filters = new ArrayList<>();
     private final Map<Class<?>, Object> sharedObjects = new HashMap<>();
 
-    public HttpSecurity(AuthenticationManager authenticationManager) {
+    public HttpSecurity(AuthenticationManager authenticationManager, Map<Class<?>, Object> sharedObjects) {
         setSharedObject(AuthenticationManager.class, authenticationManager);
+        for (Map.Entry<Class<?>, Object> entry : sharedObjects.entrySet()) {
+            setSharedObject((Class<Object>) entry.getKey(), entry.getValue());
+        }
     }
 
     public <C> C getSharedObject(Class<C> sharedType) {
@@ -62,6 +66,11 @@ public class HttpSecurity {
 
     public HttpSecurity httpBasic(Customizer<HttpBasicConfigurer> httpBasicCustomizer) {
         httpBasicCustomizer.customize(getOrApply(new HttpBasicConfigurer()));
+        return HttpSecurity.this;
+    }
+
+    public HttpSecurity securityContext(Customizer<SecurityContextConfigurer> securityContextCustomizer) {
+        securityContextCustomizer.customize(getOrApply(new SecurityContextConfigurer()));
         return HttpSecurity.this;
     }
 
