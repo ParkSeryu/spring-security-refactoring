@@ -1,5 +1,6 @@
 package nextstep.security.config.annotation.web.configuration;
 
+import nextstep.security.authentication.AuthenticationManager;
 import nextstep.security.config.annotation.web.HttpSecurity;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +15,7 @@ public class HttpSecurityConfiguration {
 
     @Bean(HTTPSECURITY_BEAN_NAME)
     @Scope("prototype")
-    HttpSecurity httpSecurity() {
-        return new HttpSecurity();
+    HttpSecurity httpSecurity(AuthenticationManager authenticationManager) {
+        return new HttpSecurity(authenticationManager);
     }
 }

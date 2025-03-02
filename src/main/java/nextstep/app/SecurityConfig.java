@@ -52,8 +52,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public DelegatingFilterProxy delegatingFilterProxy() throws Exception {
-        return new DelegatingFilterProxy(filterChainProxy(List.of(securityFilterChain(new HttpSecurity()))));
+    public DelegatingFilterProxy delegatingFilterProxy(HttpSecurity httpSecurity) {
+        return new DelegatingFilterProxy(filterChainProxy(List.of(securityFilterChain(httpSecurity))));
     }
 
     @Bean
@@ -96,10 +96,11 @@ public class SecurityConfig {
 //    }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         return http
                 .csrf(config -> config.ignoringRequestMatchers("/login"))
                 .formLogin(Customizer.withDefaults())
+                .httpBasic(Customizer.withDefaults())
                 .build();
     }
 
