@@ -11,10 +11,12 @@ import nextstep.security.config.Customizer;
 import nextstep.security.config.DefaultSecurityFilterChain;
 import nextstep.security.config.SecurityFilterChain;
 import nextstep.security.config.annotation.SecurityConfigurer;
+import nextstep.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import nextstep.security.config.annotation.web.configurers.CsrfConfigurer;
 import nextstep.security.config.annotation.web.configurers.FormLoginConfigurer;
 import nextstep.security.config.annotation.web.configurers.HttpBasicConfigurer;
 import nextstep.security.config.annotation.web.configurers.SecurityContextConfigurer;
+import org.springframework.context.ApplicationContext;
 
 public class HttpSecurity {
     private final LinkedHashMap<Class<? extends SecurityConfigurer>, SecurityConfigurer> configurers = new LinkedHashMap<>();
@@ -73,6 +75,14 @@ public class HttpSecurity {
         securityContextCustomizer.customize(getOrApply(new SecurityContextConfigurer()));
         return HttpSecurity.this;
     }
+
+    public HttpSecurity authorizeHttpRequests(
+            Customizer<AuthorizeHttpRequestsConfigurer> authorizeHttpRequestsCustomizer) {
+        authorizeHttpRequestsCustomizer
+                .customize(getOrApply(new AuthorizeHttpRequestsConfigurer()));
+        return HttpSecurity.this;
+    }
+
 
     private <C extends SecurityConfigurer> C getOrApply(C configurer) {
         Class<? extends SecurityConfigurer> clazz = configurer.getClass();

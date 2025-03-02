@@ -80,31 +80,21 @@ public class SecurityConfig {
                 new OAuth2LoginAuthenticationProvider(oAuth2UserService)));
     }
 
-//    @Bean
-//    public SecurityFilterChain securityFilterChain() {
-//        return new DefaultSecurityFilterChain(
-//                List.of(
-//                        new CsrfFilter(Set.of(new MvcRequestMatcher(HttpMethod.POST, "/login"))),
-//                        new SecurityContextHolderFilter(),
-//                        new UsernamePasswordAuthenticationFilter(authenticationManager()),
-//                        new BasicAuthenticationFilter(authenticationManager()),
-//                        new OAuth2AuthorizationRequestRedirectFilter(clientRegistrationRepository()),
-//                        new OAuth2LoginAuthenticationFilter(clientRegistrationRepository(), new OAuth2AuthorizedClientRepository(), authenticationManager()),
-//                        new AuthorizationFilter(requestAuthorizationManager())
-//                )
-//        );
-//    }
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         return http
                 .csrf(config -> config.ignoringRequestMatchers("/login"))
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestsMatchers(new MvcRequestMatcher(HttpMethod.GET, "/members"),
+                                new AuthorityAuthorizationManager(roleHierarchy(), "ADMIN"))
+                        .requestsMatchers(new MvcRequestMatcher(HttpMethod.GET, "/members/me"),
+                                new AuthorityAuthorizationManager(roleHierarchy(), "USER"))
+                        .requestsMatchers(AnyRequestMatcher.INSTANCE, new PermitAllAuthorizationManager<Void>())
+                )
                 .build();
     }
-
-    ;
 
     @Bean
     public RequestMatcherDelegatingAuthorizationManager requestAuthorizationManager() {
