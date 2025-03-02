@@ -12,6 +12,6 @@ import org.springframework.context.annotation.Import;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Documented
-@Import(HttpSecurityConfiguration.class)
+@Import({HttpSecurityConfiguration.class})
 public @interface EnableWebSecurity {
 }

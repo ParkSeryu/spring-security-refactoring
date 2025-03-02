@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import nextstep.security.authentication.AuthenticationManager;
 import nextstep.security.config.Customizer;
+import nextstep.security.config.annotation.authentication.AuthenticationManagerBuilder;
 import nextstep.security.config.annotation.web.HttpSecurity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
@@ -28,8 +29,10 @@ public class HttpSecurityConfiguration {
 
     @Bean(HTTPSECURITY_BEAN_NAME)
     @Scope("prototype")
-    HttpSecurity httpSecurity(AuthenticationManager authenticationManager) {
-        return new HttpSecurity(authenticationManager, createSharedObjects()).securityContext(Customizer.withDefaults());
+    HttpSecurity httpSecurity() {
+        AuthenticationManagerBuilder authenticationManagerBuilder = new AuthenticationManagerBuilder(context);
+        return new HttpSecurity(authenticationManagerBuilder, createSharedObjects()).securityContext(
+                Customizer.withDefaults());
     }
 
     private Map<Class<?>, Object> createSharedObjects() {

@@ -39,15 +39,9 @@ import java.util.*;
 @EnableConfigurationProperties(OAuth2ClientProperties.class)
 @EnableWebSecurity
 public class SecurityConfig {
-
-    private final UserDetailsService userDetailsService;
-    private final OAuth2UserService oAuth2UserService;
     private final OAuth2ClientProperties oAuth2ClientProperties;
 
-    public SecurityConfig(UserDetailsService userDetailsService, OAuth2UserService oAuth2UserService,
-                          OAuth2ClientProperties oAuth2ClientProperties) {
-        this.userDetailsService = userDetailsService;
-        this.oAuth2UserService = oAuth2UserService;
+    public SecurityConfig(OAuth2ClientProperties oAuth2ClientProperties) {
         this.oAuth2ClientProperties = oAuth2ClientProperties;
     }
 
@@ -74,13 +68,6 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager() {
-        return new ProviderManager(List.of(
-                new DaoAuthenticationProvider(userDetailsService),
-                new OAuth2LoginAuthenticationProvider(oAuth2UserService)));
-    }
-
-    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         return http
                 .csrf(config -> config.ignoringRequestMatchers("/login"))
@@ -94,17 +81,6 @@ public class SecurityConfig {
                         .requestsMatchers(AnyRequestMatcher.INSTANCE, new PermitAllAuthorizationManager<Void>())
                 )
                 .build();
-    }
-
-    @Bean
-    public RequestMatcherDelegatingAuthorizationManager requestAuthorizationManager() {
-        List<RequestMatcherEntry<AuthorizationManager>> mappings = new ArrayList<>();
-        mappings.add(new RequestMatcherEntry<>(new MvcRequestMatcher(HttpMethod.GET, "/members"),
-                new AuthorityAuthorizationManager(roleHierarchy(), "ADMIN")));
-        mappings.add(new RequestMatcherEntry<>(new MvcRequestMatcher(HttpMethod.GET, "/members/me"),
-                new AuthorityAuthorizationManager(roleHierarchy(), "USER")));
-        mappings.add(new RequestMatcherEntry<>(AnyRequestMatcher.INSTANCE, new PermitAllAuthorizationManager<Void>()));
-        return new RequestMatcherDelegatingAuthorizationManager(mappings);
     }
 
     @Bean
