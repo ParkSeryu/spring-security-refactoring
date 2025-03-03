@@ -17,6 +17,7 @@ import nextstep.security.config.annotation.web.configurers.AuthorizeHttpRequests
 import nextstep.security.config.annotation.web.configurers.CsrfConfigurer;
 import nextstep.security.config.annotation.web.configurers.FormLoginConfigurer;
 import nextstep.security.config.annotation.web.configurers.HttpBasicConfigurer;
+import nextstep.security.config.annotation.web.configurers.OAuth2LoginConfigurer;
 import nextstep.security.config.annotation.web.configurers.SecurityContextConfigurer;
 
 public class HttpSecurity {
@@ -64,6 +65,11 @@ public class HttpSecurity {
         }
     }
 
+    public HttpSecurity authenticationProvider(AuthenticationProvider authenticationProvider) {
+        getAuthenticationRegistry().authenticationProvider(authenticationProvider);
+        return this;
+    }
+
     private AuthenticationManagerBuilder getAuthenticationRegistry() {
         return getSharedObject(AuthenticationManagerBuilder.class);
     }
@@ -84,6 +90,11 @@ public class HttpSecurity {
         return HttpSecurity.this;
     }
 
+    public HttpSecurity oauth2Login(Customizer<OAuth2LoginConfigurer> oAuth2ConfigurerCustomizer){
+        oAuth2ConfigurerCustomizer.customize(getOrApply(new OAuth2LoginConfigurer()));
+        return HttpSecurity.this;
+    }
+
     public HttpSecurity securityContext(Customizer<SecurityContextConfigurer> securityContextCustomizer) {
         securityContextCustomizer.customize(getOrApply(new SecurityContextConfigurer()));
         return HttpSecurity.this;
@@ -95,7 +106,6 @@ public class HttpSecurity {
                 .customize(getOrApply(new AuthorizeHttpRequestsConfigurer()));
         return HttpSecurity.this;
     }
-
 
     private <C extends SecurityConfigurer> C getOrApply(C configurer) {
         Class<? extends SecurityConfigurer> clazz = configurer.getClass();

@@ -63,6 +63,7 @@ public class SecurityConfig {
                 .csrf(config -> config.ignoringRequestMatchers("/login"))
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())
+                .oauth2Login(Customizer.withDefaults())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestsMatchers(new MvcRequestMatcher(HttpMethod.GET, "/members"),
                                 new AuthorityAuthorizationManager(roleHierarchy(), "ADMIN"))
