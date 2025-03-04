@@ -1,6 +1,7 @@
 package nextstep.security.config.annotation.web.configurers;
 
 import nextstep.oauth2.authentication.OAuth2LoginAuthenticationProvider;
+import nextstep.oauth2.userinfo.DefaultOAuth2UserService;
 import nextstep.oauth2.userinfo.OAuth2UserService;
 import nextstep.oauth2.web.OAuth2AuthorizationRequestRedirectFilter;
 import nextstep.oauth2.web.OAuth2LoginAuthenticationFilter;
@@ -39,7 +40,8 @@ public class OAuth2LoginConfigurer implements SecurityConfigurer {
 
     private OAuth2UserService getOAuth2UserService(HttpSecurity http) {
         ApplicationContext context = http.getSharedObject(ApplicationContext.class);
-        return context.getBean(OAuth2UserService.class);
+        OAuth2UserService bean = context.getBean(OAuth2UserService.class);
+        return (bean != null) ? bean : new DefaultOAuth2UserService();
     }
 
     private void setAuthenticationFilter(OAuth2LoginAuthenticationFilter authenticationFilter) {

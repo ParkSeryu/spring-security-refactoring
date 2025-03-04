@@ -10,7 +10,7 @@ import org.springframework.beans.factory.NoUniqueBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.StringUtils;
 
-public class OAuth2ClientConfigurerUtils {
+public final class OAuth2ClientConfigurerUtils {
     public static ClientRegistrationRepository getClientRegistrationRepository(HttpSecurity builder) {
         ClientRegistrationRepository clientRegistrationRepository = builder.getSharedObject(ClientRegistrationRepository.class);
         if (clientRegistrationRepository == null) {

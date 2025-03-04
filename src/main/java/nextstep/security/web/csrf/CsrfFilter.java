@@ -4,8 +4,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import nextstep.security.access.MvcRequestMatcher;
 import nextstep.security.access.RequestMatcher;
+import org.springframework.http.HttpMethod;
 import org.springframework.util.Assert;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 public class CsrfFilter extends OncePerRequestFilter {
     public static final RequestMatcher DEFAULT_CSRF_MATCHER = new DefaultRequiresCsrfMatcher();
@@ -26,6 +25,7 @@ public class CsrfFilter extends OncePerRequestFilter {
         Assert.notNull(tokenRepository, "tokenRepository cannot be null");
         this.tokenRepository = tokenRepository;
     }
+
     public void setRequireCsrfProtectionMatcher(RequestMatcher requireCsrfProtectionMatcher) {
         Assert.notNull(requireCsrfProtectionMatcher, "requireCsrfProtectionMatcher cannot be null");
         this.requireCsrfProtectionMatcher = requireCsrfProtectionMatcher;
@@ -58,7 +58,9 @@ public class CsrfFilter extends OncePerRequestFilter {
 
     private static final class DefaultRequiresCsrfMatcher implements RequestMatcher {
 
-        private final HashSet<String> allowedMethods = new HashSet<>(Arrays.asList("GET", "HEAD", "TRACE", "OPTIONS"));
+        private final HashSet<String> allowedMethods = new HashSet<>(
+                Arrays.asList(HttpMethod.GET.name(), HttpMethod.HEAD.name(), HttpMethod.TRACE.name(),
+                        HttpMethod.OPTIONS.name()));
 
         @Override
         public boolean matches(HttpServletRequest request) {
