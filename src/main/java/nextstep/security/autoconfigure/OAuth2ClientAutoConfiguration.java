@@ -18,6 +18,4 @@ import org.springframework.context.annotation.Import;
 )
 @Import({OAuth2ClientRegistrationRepositoryConfiguration.class})
 public class OAuth2ClientAutoConfiguration {
-    public OAuth2ClientAutoConfiguration() {
-    }
 }
